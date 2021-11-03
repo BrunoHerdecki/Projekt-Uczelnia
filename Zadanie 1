@@ -1,0 +1,108 @@
+--Zdanie 1.
+
+USE master;
+GO
+DROP DATABASE IF EXISTS Uczelnia;
+GO
+CREATE DATABASE Uczelnia;
+GO
+USE Uczelnia
+GO
+
+CREATE TABLE grupy
+(
+nr_grupy varchar(8) NOT NULL,
+CONSTRAINT PK_grupy PRIMARY KEY (nr_grupy)
+)
+GO
+
+CREATE TABLE studenci
+(
+id_studenta int IDENTITY(1,1) NOT NULL,
+nazwisko varchar(30) NOT NULL,
+imie varchar(30) NOT NULL,
+data_urodzenia date NOT NULL,	
+nr_grupy varchar(8) NULL,
+CONSTRAINT PK_id_studenta_studenci PRIMARY KEY (id_studenta),
+CONSTRAINT check_data_urodzenia CHECK ((datediff(DAY, data_urodzenia, (getdate()))>=6574.5)),
+CONSTRAINT FK_nr_grupy FOREIGN KEY (nr_grupy) REFERENCES grupy(nr_grupy)
+ON UPDATE CASCADE
+)
+GO
+
+CREATE TABLE stopnie_tytuly
+(
+stopien_tytul varchar(50) NOT NULL,
+stawka money NOT NULL,
+CONSTRAINT PK_stopien_tytul PRIMARY KEY (stopien_tytul)
+)
+GO
+
+CREATE TABLE pracownicy
+(
+id_pracownika INT NOT NULL,
+nazwisko varchar(30) NOT NULL,
+imie varchar(30) NOT NULL,
+data_zatrudnienia date NOT NULL,
+PESEL decimal(11) NULL,
+CONSTRAINT check_data_zatrudnienia CHECK (data_zatrudnienia<=getdate()),
+CONSTRAINT PK_id_pracownika PRIMARY KEY (id_pracownika)
+)
+GO
+
+CREATE TABLE wykladowcy
+(
+id_wykladowcy int NOT NULL,
+stopien_tytul varchar(50) NULL,
+katedra varchar(50) NULL,
+CONSTRAINT PK_id_wykladowcy PRIMARY KEY (id_wykladowcy),
+CONSTRAINT FK_id_wykladowcy1 FOREIGN KEY (id_wykladowcy) REFERENCES pracownicy(id_pracownika)
+ON UPDATE CASCADE,
+CONSTRAINT FK_stopien_tytul FOREIGN KEY (stopien_tytul) REFERENCES stopnie_tytuly(stopien_tytul)
+ON UPDATE CASCADE
+)
+GO
+
+CREATE TABLE wyklady
+(
+id_wykladu int NOT NULL,
+nazwa_wykladu varchar(50) NOT NULL,
+liczba_godzin int NOT NULL,
+id_wykladowcy int NULL,
+CONSTRAINT check_liczba_godzin CHECK (liczba_godzin<=60),
+CONSTRAINT PK_id_wykladu PRIMARY KEY (id_wykladu),
+CONSTRAINT FK_id_wykladowcy FOREIGN KEY (id_wykladowcy) REFERENCES wykladowcy(id_wykladowcy),
+CONSTRAINT U_nazwa_wykladu UNIQUE (nazwa_wykladu)
+)
+GO
+
+CREATE TABLE studenci_wyklady
+(
+id_studenta int NOT NULL,
+id_wykladu int NOT NULL,
+CONSTRAINT PK_id_studenta PRIMARY KEY (id_studenta, id_wykladu),
+CONSTRAINT FK_id_studenta FOREIGN KEY (id_studenta) REFERENCES studenci(id_studenta)
+ON UPDATE CASCADE,
+CONSTRAINT FK_id_wykladu FOREIGN KEY (id_wykladu) REFERENCES wyklady(id_wykladu)
+)
+GO
+
+CREATE TABLE oceny
+(
+ocena float(1),
+CONSTRAINT PK_ocena PRIMARY KEY (ocena)
+)
+GO
+
+CREATE TABLE oceny_studentow
+(
+id_studenta int NOT NULL,
+id_wykladu int NOT NULL,
+data_egzaminu date CHECK (data_egzaminu<getdate()) DEFAULT (getdate()) NOT NULL,
+ocena float(1) NOT NULL,
+CONSTRAINT PK_oceny_studentow PRIMARY KEY (id_studenta, id_wykladu, data_egzaminu),
+CONSTRAINT FK_oceny_studentow FOREIGN KEY (id_studenta) REFERENCES studenci(id_studenta),
+CONSTRAINT FK_oceny_studentow1 FOREIGN KEY (id_wykladu) REFERENCES wyklady(id_wykladu),
+CONSTRAINT FK_oceny_studentow2 FOREIGN KEY (ocena) REFERENCES oceny(ocena)
+)
+GO
