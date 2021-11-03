@@ -1,0 +1,14 @@
+--Zadanie 2.
+
+USE Uczelnia;
+GO
+
+ALTER TABLE pracownicy ADD dane_adresowe varchar(50)
+ALTER TABLE pracownicy DROP CONSTRAINT check_data_zatrudnienia
+ALTER TABLE pracownicy DROP COLUMN data_zatrudnienia
+ALTER TABLE studenci ADD FOREIGN KEY (nr_grupy) REFERENCES grupy(nr_grupy) ON DELETE CASCADE
+ALTER TABLE wyklady DROP CONSTRAINT check_liczba_godzin
+ALTER TABLE wyklady ADD CHECK (liczba_godzin<=90)
+ALTER TABLE wyklady ALTER COLUMN id_wykladowcy int NOT NULL
+ALTER TABLE studenci DROP CONSTRAINT check_data_urodzenia
+ALTER TABLE studenci ADD CHECK ((datediff(DAY, data_urodzenia, (getdate()))>=5844))
