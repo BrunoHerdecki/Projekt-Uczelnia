@@ -1,0 +1,87 @@
+--Zad 4.
+
+
+USE Uczelnia;
+GO
+
+-- I.
+
+-- 1.
+INSERT INTO Studia.grupy VALUES ('DMIe1001')
+INSERT INTO Studia.grupy(nr_grupy) VALUES ('DMZm1003')
+INSERT INTO Studia.grupy(nr_grupy) VALUES ('ZMZm2001')
+-- 2.
+INSERT INTO HR.stopnie_tytuly VALUES ('Doktor',45),('Doktor Habilitowany',55),('Profesor Nadzwyczajny',60),('Profesor Zwyczajny',65)
+-- 3.
+INSERT INTO Studia.oceny VALUES (2.0),(3.0),(3.5),(4.0),(4.5),(5.0)
+-- 4. ,5.
+INSERT INTO HR.pracownicy (id_pracownika,nazwisko,imie,PESEL,dane_adresowe) VALUES (1,'HALEMBA','IWONA',NULL,NULL)
+INSERT INTO HR.pracownicy (id_pracownika,nazwisko,imie,PESEL,dane_adresowe) VALUES (2,'NOWAK','JACEK',NULL,NULL)
+INSERT INTO HR.pracownicy (id_pracownika,nazwisko,imie,PESEL,dane_adresowe) VALUES (3,'JANIKOWSKI','IRENEUSZ',NULL,NULL)
+INSERT INTO HR.pracownicy (id_pracownika,nazwisko,imie,PESEL,dane_adresowe) VALUES (4,'MALINOWSKI','JACEK',NULL,NULL)
+INSERT INTO HR.wykladowcy (id_wykladowcy,stopien_tytul,katedra) VALUES (1,'Doktor','Katedra Matematyki')
+INSERT INTO HR.wykladowcy (id_wykladowcy,stopien_tytul,katedra) VALUES (2,'Profesor Nadzwyczajny','Katedra informatyki')
+INSERT INTO HR.wykladowcy (id_wykladowcy,stopien_tytul,katedra) VALUES (3,'Doktor','Katedra Historii')
+-- 6.
+INSERT INTO Studia.studenci (nazwisko,imie,data_urodzenia,nr_grupy) VALUES ('IWANICKI','MACIEJ','1980-10-27','DMIe1001')
+INSERT INTO Studia.studenci (nazwisko,imie,data_urodzenia,nr_grupy) VALUES ('NOWAKOWSKI','KAMIL','1978-02-20','DMZm1003')
+INSERT INTO Studia.studenci (nazwisko,imie,data_urodzenia,nr_grupy) VALUES ('MICHALAK','MALGORZATA','1992-07-22','DMZm1003')
+-- 7.
+INSERT INTO Studia.wyklady (id_wykladu,nazwa_wykladu,liczba_godzin,id_wykladowcy) VALUES (1,'Informatyka',30,2)
+INSERT INTO Studia.wyklady (id_wykladu,nazwa_wykladu,liczba_godzin,id_wykladowcy) VALUES (2,'Statystyka',15,1)
+INSERT INTO Studia.wyklady (id_wykladu,nazwa_wykladu,liczba_godzin,id_wykladowcy) VALUES (3,'Historia',30,3)
+-- 8.
+INSERT INTO Studia.studenci_wyklady (id_studenta,id_wykladu) VALUES (2,1)
+INSERT INTO Studia.studenci_wyklady (id_studenta,id_wykladu) VALUES (1,2)
+INSERT INTO Studia.studenci_wyklady (id_studenta,id_wykladu) VALUES (2,2)
+-- 9.
+INSERT INTO Studia.oceny_studentow (id_studenta,id_wykladu,data_egzaminu,ocena) VALUES (2,1,'2017-03-21',2.0)
+INSERT INTO Studia.oceny_studentow (id_studenta,id_wykladu,data_egzaminu,ocena) VALUES (2,2,'2017-04-10',4.0)
+INSERT INTO Studia.oceny_studentow (id_studenta,id_wykladu,data_egzaminu,ocena) VALUES (1,1,'2017-04-12',5.0)  --WSZYSTKIE DANE MOGLEM ZAPISAC W BAZIE (w zadaniu miala byc przyszla data?)
+INSERT INTO Studia.oceny_studentow (id_studenta,id_wykladu,data_egzaminu,ocena) VALUES (1,2,'2017-03-17',5.0)
+-- 10.
+UPDATE Studia.oceny_studentow SET ocena=4, data_egzaminu=DEFAULT WHERE (data_egzaminu ='2017-03-21' AND id_studenta=2 AND id_wykladu=1)
+
+-- II.
+
+-- 1.
+UPDATE Studia.grupy SET nr_grupy='DMZm3011' WHERE nr_grupy='ZMZm2001'
+-- 2.
+UPDATE HR.wykladowcy SET stopien_tytul='Profesor Zwyczajny', katedra='Katedra Matematyki' WHERE id_wykladowcy=2
+-- 3.
+UPDATE Studia.wyklady SET id_wykladowcy=2, liczba_godzin=30 WHERE id_wykladu=2
+-- 4.
+--UPDATE Studia.studenci SET nr_grupy='ZMZm2001' WHERE id_studenta=3 -Nie zostanie wykonane poniewaz nie ma takiej grupy w tabeli Studia.grupy
+-- 5.
+
+/*INSERT INTO HR.wykladowcy (id_wykladowcy,stopien_tytul,katedra) VALUES (4,NULL,NULL)   
+UPDATE Studia.wyklady SET id_wykladowcy=4 WHERE id_wykladu=3         -zeby wykonca to polecenie musialbym dodac pracownika do wykladowcow          */
+
+-- III.
+
+-- 1.
+--DELETE FROM Studia.studenci WHERE (imie='KAMIL' AND nazwisko='NOWAKOWSKI') -Nie zostanie wykonane poniewaz id tego studenta zostaly wpisane do kolumny "Studia.studenci_wyklady"
+-- 2.
+DELETE FROM Studia.studenci WHERE (imie='MALGORZATA' AND nazwisko='MICHALAK')
+-- 3.
+DELETE FROM Studia.oceny WHERE ocena=2
+-- 4.
+DELETE FROM Studia.studenci_wyklady WHERE id_studenta=1
+-- 5.
+--DELETE FROM Studia.wyklady WHERE id_wykladu=1 -Nie zostanie wykonane poniewaz do tego wykladu jest przypisany student
+-- 6.
+DELETE FROM Studia.wyklady WHERE id_wykladu=3
+
+-- IV.
+
+-- 1.
+UPDATE HR.pracownicy SET PESEL='12345678901' WHERE id_pracownika=1
+UPDATE HR.pracownicy SET PESEL='12345678902' WHERE id_pracownika=2
+UPDATE HR.pracownicy SET PESEL='12345678903' WHERE id_pracownika=3
+UPDATE HR.pracownicy SET PESEL='12345678904' WHERE id_pracownika=4
+ALTER TABLE HR.pracownicy ALTER COLUMN PESEL DECIMAL(11) NOT NULL
+ALTER TABLE HR.pracownicy ADD UNIQUE (PESEL)
+-- 2.
+ALTER TABLE Studia.wyklady ALTER COLUMN id_wykladowcy int NULL
+-- 3.
+ALTER TABLE Studia.studenci ADD CHECK ((datediff(DAY, data_urodzenia, (getdate()))>=10957.5))
