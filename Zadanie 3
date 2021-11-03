@@ -1,0 +1,22 @@
+-- Zadanie 3.
+
+USE Uczelnia;
+GO
+
+CREATE SCHEMA Studia;
+GO
+
+CREATE SCHEMA HR;
+GO
+
+ALTER SCHEMA HR TRANSFER dbo.pracownicy
+ALTER SCHEMA HR TRANSFER dbo.wykladowcy
+ALTER SCHEMA HR TRANSFER dbo.stopnie_tytuly
+ALTER SCHEMA Studia TRANSFER dbo.grupy
+ALTER SCHEMA Studia TRANSFER dbo.studenci
+ALTER SCHEMA Studia TRANSFER dbo.oceny_studentow
+ALTER SCHEMA Studia TRANSFER dbo.oceny
+ALTER SCHEMA Studia TRANSFER dbo.wyklady
+ALTER SCHEMA Studia TRANSFER dbo.studenci_wyklady
+
+
